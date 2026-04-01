@@ -1,1 +1,10 @@
-//The YAML file for the Codewave Studio Blueprint on the Render platform.
+services:
+  - type: web
+    name: codewave-studio-validation-landing
+    env: next
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    envVars:
+      - key: NODE_ENV
+        value: production
