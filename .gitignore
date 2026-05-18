@@ -1,36 +1,83 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
+# Dependencies
+node_modules/
+.pnp
 .pnp.js
+.yarn/install-state.gz
 
-# testing
+# Logs and artifacts
+*.log
+seo_audit_report*.xml
+lhreport*.json
+lighthouse-report.html
+*.webp
+*.png
+!public/*.png
+!public/*.webp
+
+# IDE
+/.idea/*
+!/.idea/runConfigurations
+.vscode/
+
+# Testing
 /coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/resources/
 
-# next.js
+# Frameworks (Next.js / Vite)
 /.next/
 /out/
-
-# production
+/dist/
 /build
+*.tsbuildinfo
+next-env.d.ts
 
-# misc
+# Production
+/media
+
+# Env & Misc
+.env
+.env*.local
 .DS_Store
 *.pem
+.vercel
 
-# debug
+# Debug & Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+build_log.txt
+debug.log
 
-# local env files
-.env*.local
-.env
+# Binaries
+*.exe
+*.dll
+*.bin
+vk_swiftshader.dll
+libEGL.dll
+libGLESv2.dll
+ffmpeg.dll
+d3dcompiler_47.dll
+dxcompiler.dll
+dxil.dll
+v8_context_snapshot.bin
+Antigravity.exe
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Agent & Lint Reports
+.agents/
+*report.md
+*results.json
+eslint-report.json
+eslint-stylish.txt
+lint-results-clean.json
+lint-results.json
+lint_output.txt
+lint_results.json
+seo-report.md
+seomator.toml
+skills-lock.json
+test-results.txt
+test.env

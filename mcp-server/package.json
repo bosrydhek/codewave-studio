@@ -1,0 +1,27 @@
+{
+  "name": "designwave-mcp",
+  "version": "1.0.0",
+  "description": "Unified MCP server for Designwave stack (Supabase, Neon, Netlify)",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "designwave-mcp": "build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "dev": "tsc -w",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.1",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^3.3.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5",
+    "prettier": "^3.4.2"
+  }
+}

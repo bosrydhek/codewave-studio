@@ -1,0 +1,39 @@
+# Non-production directories
+.agents/
+mcp-server/
+tests/
+scripts/
+external/
+tests-results.txt
+prds/
+.gemini/
+.pnpm-store/
+
+# Docker files
+docker-compose.yml
+Dockerfile
+
+# Test files
+**/*.test.tsx
+**/*.test.ts
+**/*.spec.ts
+**/*.spec.tsx
+
+# Log files
+*.log
+lint_output.txt
+test-results.txt
+
+# Environment files
+.env
+.env.local
+.envlocal
+
+# Config files
+vitest.config.js
+vitest.config.mts
+playwright.config.ts
+vitest.setup.ts
+eslint.config.js
+eslint.config.mjs
+.prettierrc.json
