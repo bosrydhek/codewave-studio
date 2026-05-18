@@ -1,152 +1,166 @@
 import React, { useState, useEffect } from 'react'
-import { Plus, MoreVertical, Folder, ArrowRight, Sparkles, Sunrise, Sun, Moon } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { getSupabaseClient } from '@/lib/supabase'
-
-export interface Workspace {
-  id: string
-  name: string
-}
+import { useNavigate } from 'react-router-dom'
+import { Plus, Folder, Sparkles, Sunrise, Sun, Moon } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export interface Project {
   id: string
-  workspace_id: string
   name: string
+  vertical: string
+  roi: number
+  price: number
   status: string
-  config: any
+  aesthetic: string
+  revisionsLeft: number
   updated_at: string
 }
 
 const getGreeting = (): { text: string; icon: React.ReactNode } => {
   const hour = new Date().getHours()
-  if (hour < 12) return { text: 'Good morning', icon: <Sunrise size={24} className="text-warning" /> }
-  if (hour < 17) return { text: 'Good afternoon', icon: <Sun size={24} className="text-warning" /> }
-  return { text: 'Good evening', icon: <Moon size={24} className="text-primary-tint-1" /> }
+  if (hour < 12) return { text: 'Good morning', icon: <Sunrise size={22} className="text-warning animate-pulse" /> }
+  if (hour < 17) return { text: 'Good afternoon', icon: <Sun size={22} className="text-warning animate-pulse" /> }
+  return { text: 'Good evening', icon: <Moon size={22} className="text-primary-tint-1" /> }
 }
 
-const ProjectCard = ({ project, onOpen }: { project: Project, onOpen: (id: string) => void }) => {
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="glass-card group relative cursor-pointer p-6 hover:border-primary/50 transition-colors"
-      onClick={() => onOpen(project.id)}
-    >
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-primary mb-1 block">
-            Project
-          </span>
-          <h3 className="text-lg font-bold text-text-primary group-hover:text-primary transition-colors m-0 leading-tight">
-            {project.name}
-          </h3>
-        </div>
-        <button
-          className="text-text-muted hover:text-text-primary transition-colors"
-          aria-label="Project options"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <MoreVertical size={18} />
-        </button>
-      </div>
-
-      <div className="flex items-center gap-3 mt-6 pt-4 border-t border-border-low/50">
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-pill text-[10px] font-bold uppercase bg-primary/10 text-primary">
-          {project.status}
-        </div>
-        <div className="flex-1" />
-        <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
-          {new Date(project.updated_at).toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-          })}
-        </div>
-      </div>
-    </motion.div>
-  )
-}
-
-export const Dashboard = ({ onNewProject, onOpenProject }: { onNewProject: () => void, onOpenProject: (id: string) => void }) => {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([])
+export const Dashboard = () => {
+  const navigate = useNavigate()
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<{ email?: string; user_metadata?: { full_name?: string } } | null>(null)
 
   useEffect(() => {
-    const sb = getSupabaseClient()
-    sb.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUser(user)
-    })
-
-    const fetchData = async () => {
-      // In a real implementation we would fetch from Supabase
-      // const { data: wData } = await sb.from('workspaces').select('*')
-      // const { data: pData } = await sb.from('projects').select('*')
-      
-      // Stubbing data for MVP UI testing
-      setWorkspaces([{ id: 'default', name: 'My Workspace' }])
-      setProjects([
-        { id: '1', workspace_id: 'default', name: 'Hartwell Property', status: 'planning', config: {}, updated_at: new Date().toISOString() },
-      ])
+    const fetchProjects = () => {
+      let mockProjects = JSON.parse(localStorage.getItem('designwave_projects') || '[]')
+      if (mockProjects.length === 0) {
+        // Fallback default demo project
+        const defaultProj: Project = {
+          id: 'dw-hartwell',
+          name: 'Hartwell Properties',
+          vertical: 'SaaS / Tech',
+          roi: 100000,
+          price: 5000,
+          status: 'AI Clarifying',
+          aesthetic: 'Sleek Glassmorphic',
+          revisionsLeft: 3,
+          updated_at: new Date().toISOString()
+        }
+        localStorage.setItem('designwave_projects', JSON.stringify([defaultProj]))
+        mockProjects = [defaultProj]
+      }
+      setProjects(mockProjects)
       setLoading(false)
     }
 
-    fetchData()
+    fetchProjects()
   }, [])
 
   const greeting = getGreeting()
-  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there'
 
   return (
-    <div className="flex-1 overflow-y-auto p-8 pt-10 pb-16 relative z-0">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-          <div className="flex items-center gap-3 mb-2">
-            {greeting.icon}
-            <h1 className="text-3xl font-display m-0">{greeting.text}, {displayName}</h1>
+    <div className="flex-1 overflow-y-auto p-6 md:p-10 relative z-0 text-text-primary">
+      <div className="max-w-7xl mx-auto space-y-10">
+        
+        {/* Welcome greeting header */}
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border-low/40 pb-6"
+        >
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-text-muted">
+              {greeting.icon}
+              <span className="text-sm font-semibold">{greeting.text}, Builder</span>
+            </div>
+            <h1 className="text-3xl font-display font-semibold">Self-Serve Workspaces</h1>
+            <p className="text-text-muted text-xs">
+              Manage your active AI synthesis projects and edge-deploying CMS sites.
+            </p>
           </div>
-          <p className="text-text-muted max-w-lg text-sm">
-            Manage your workspaces and projects. Build Payload CMS apps faster.
-          </p>
+
+          <button
+            onClick={() => navigate('/intake')}
+            className="btn-primary-gradient group rounded-pill px-6 py-3 flex items-center gap-2 shadow-[0_8px_32px_rgba(var(--color-primary),0.3)] hover:scale-105 active:scale-95 transition-all text-xs font-bold text-text-on-primary self-start md:self-auto"
+          >
+            <Plus size={16} />
+            Launch Onboarding Brief
+          </button>
         </motion.div>
 
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-xl font-bold text-text-primary m-0">Recent Projects</h2>
-          <button
-            onClick={onNewProject}
-            className="btn-primary-gradient group rounded-pill px-5 py-2.5 flex items-center gap-2 shadow-[0_8px_32px_rgba(var(--color-primary),0.3)] hover:scale-105 active:scale-95 transition-all"
-          >
-            <Plus size={18} className="text-text-on-primary" />
-            <span className="font-bold text-text-on-primary text-sm">New Project</span>
-          </button>
+        {/* Project Section */}
+        <div className="space-y-6">
+          <h2 className="text-lg font-bold text-text-secondary">Your Onboarded Ventures</h2>
+
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2].map((i) => (
+                <div key={i} className="glass-card h-48 animate-pulse rounded-card" />
+              ))}
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 border border-dashed border-border-low/60 rounded-card bg-bg-sunken/10">
+              <Folder size={36} className="text-primary mb-4" />
+              <h3 className="text-xl font-bold">No active workspaces</h3>
+              <p className="text-text-muted text-xs text-center max-w-sm mt-2 mb-6">
+                Ready to build? Onboard your project brief and launch premium dynamic designs in hours.
+              </p>
+              <button 
+                onClick={() => navigate('/intake')} 
+                className="btn-primary-gradient rounded-pill px-6 py-3 text-xs font-bold text-text-on-primary flex items-center gap-2 shadow-lg"
+              >
+                <Sparkles size={16} />
+                Get Started
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {projects.map((p) => (
+                <motion.div
+                  key={p.id}
+                  layout
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  onClick={() => navigate(`/portal/${p.id}`)}
+                  className="glass-card group cursor-pointer p-6 hover:border-primary/50 border border-border-low/60 rounded-card bg-bg-surface/30 backdrop-blur-md flex flex-col justify-between h-56 transition-colors shadow-sm"
+                >
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[9px] font-mono text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-pill">
+                        {p.id}
+                      </span>
+                      <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-pill border ${
+                        p.status === 'Done' ? 'border-success text-success bg-success/5' :
+                        p.status === 'Escalated' ? 'border-danger text-danger bg-danger/5 animate-pulse' :
+                        'border-primary text-primary bg-primary/5'
+                      }`}>
+                        {p.status}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-bold text-text-primary group-hover:text-primary transition-colors m-0 leading-tight">
+                        {p.name}
+                      </h3>
+                      <p className="text-[10px] text-text-muted mt-1">Aesthetics: {p.aesthetic}</p>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-border-low/40 pt-4 flex justify-between items-center text-xs">
+                    <div className="space-y-1">
+                      <span className="text-[9px] text-text-muted uppercase font-bold block">Escrow Rate</span>
+                      <span className="font-mono font-bold text-text-secondary">£{p.price.toLocaleString()}</span>
+                    </div>
+                    
+                    <div className="space-y-1 text-right">
+                      <span className="text-[9px] text-text-muted uppercase font-bold block">Revisions</span>
+                      <span className="font-bold text-text-secondary">{p.revisionsLeft} left</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (<div key={i} className="glass-card h-48 animate-pulse" />))}
-          </div>
-        ) : projects.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 px-8 glass-card border-dashed border-2 bg-transparent">
-            <Folder size={36} className="text-primary mb-6" />
-            <h2 className="text-2xl font-bold text-text-primary mb-2">No projects yet</h2>
-            <p className="text-text-muted text-center max-w-md mb-8 text-sm">
-              Start your first project to begin building your Payload CMS site.
-            </p>
-            <button onClick={onNewProject} className="btn-primary-gradient rounded-pill px-8 py-4 flex items-center gap-2 shadow-2xl hover:scale-105 active:scale-95 transition-all">
-              <Sparkles size={20} className="text-text-on-primary" />
-              <span className="font-bold text-text-on-primary text-lg">Create Project</span>
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((p) => (
-              <ProjectCard key={p.id} project={p} onOpen={onOpenProject} />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   )

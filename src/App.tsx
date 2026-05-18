@@ -2,6 +2,9 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { LandingPage } from '@/components/LandingPage'
 import { Workbench } from '@/components/Workbench'
+import { IntakePricingForm } from '@/components/IntakePricingForm'
+import { ClientPipelinePortal } from '@/components/ClientPipelinePortal'
+import { OperatorPanel } from '@/components/OperatorPanel'
 
 const App: React.FC = () => {
   return (
@@ -9,13 +12,13 @@ const App: React.FC = () => {
       <Routes>
         {/* Main Routes */}
         <Route path="/" element={<LandingPage />} />
+        <Route path="/intake" element={<IntakePricingForm />} />
+        <Route path="/portal/:id" element={<ClientPipelinePortal />} />
+        <Route path="/operator" element={<OperatorPanel />} />
         <Route path="/dashboard" element={<Workbench initialView="dashboard" />} />
-        <Route path="/editor" element={<Workbench initialView="editor" />} />
-        <Route path="/projects" element={<Workbench initialView="projects" />} />
-        <Route path="/canvas" element={<Workbench initialView="canvas" />} />
         
         {/* Catch-all */}
-        <Route path="*" element={<Workbench initialView="welcome" />} />
+        <Route path="*" element={<LandingPage />} />
       </Routes>
     </Router>
   )

@@ -1,10 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   getUserProfile,
-  syncUserData,
-  signUpWithEmail,
-  signInWithMagicLink,
-  signInWithOAuth,
+  syncUserData
 } from '../lib/supabase'
 import { supabase } from '../lib/supabase'
 

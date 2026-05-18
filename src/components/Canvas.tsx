@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { Layout, Smartphone, Globe, Code, Sparkles } from 'lucide-react'
-import { DemoWidget } from './DemoWidget'
 
 interface CanvasProps {
   generatedCode: string | null
@@ -87,13 +86,8 @@ const Canvas: React.FC<CanvasProps> = ({ generatedCode, onDeploy, onGithubSync }
                          <body>
                            <div id="root"></div>
                            <script type="module">
-                             // Simple mock for React in the preview if needed, 
-                             // but for now we expect the generated code to be simple enough or self-contained.
-                             // If it's a full component, we'd need a bundler like WebContainers.
-                             // For this demo, we'll wrap the code in a simple execution block.
                              const code = \`${generatedCode.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
                              
-                             // If it looks like a full HTML/JS app, we just inject it
                              if (code.includes('<!DOCTYPE html>') || code.includes('<body')) {
                                document.open();
                                document.write(code);
@@ -117,8 +111,30 @@ const Canvas: React.FC<CanvasProps> = ({ generatedCode, onDeploy, onGithubSync }
               </div>
             </div>
           ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <DemoWidget />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-bg-sunken/40">
+              <div className="bg-bg-surface/50 border border-border-low/60 p-10 rounded-modal max-w-lg shadow-2xl backdrop-blur-md">
+                <div className="mx-auto w-12 h-12 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
+                  <Sparkles className="text-primary animate-pulse" size={24} />
+                </div>
+                <h3 className="text-text-primary text-xl font-bold tracking-tight">Ready for Generation</h3>
+                <p className="text-text-muted mt-3 text-sm leading-relaxed">
+                  Designwave&apos;s AI pipeline will synthesize production-ready Payload CMS sites, premium styles, and workflows directly inside this canvas.
+                </p>
+                <div className="mt-8 flex flex-col gap-2.5 text-left text-xs bg-bg-sunken/60 rounded-sm border border-border-low/40 p-5 font-mono text-text-secondary">
+                  <div className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-success shadow-[0_0_8px_var(--color-success)]" />
+                    <span>RAG Memory: Connected</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-success shadow-[0_0_8px_var(--color-success)]" />
+                    <span>Onboarding Brief: Completed</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--color-primary),0.5)]" />
+                    <span>Current Pipeline: Ready to synthesize code</span>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 

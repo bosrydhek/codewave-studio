@@ -1,57 +1,50 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
-import { FlaskConical, X } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { X, ShieldAlert } from 'lucide-react'
 
 interface SandboxModeUIProps {
-  children: React.ReactNode
   isActive: boolean
-  onExit?: () => void
+  onExit: () => void
+  children: React.ReactNode
 }
 
-export const SandboxModeUI = ({ children, isActive, onExit }: SandboxModeUIProps) => {
-  if (!isActive) return <>{children}</>
-
+export const SandboxModeUI: React.FC<SandboxModeUIProps> = ({ isActive, onExit, children }) => {
   return (
-    <div className="relative min-h-screen">
-      {/* Sandbox Visual Indicator */}
-      <motion.div
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="fixed top-0 left-0 right-0 z-[100] h-12 bg-amber-500 flex items-center justify-center gap-4 shadow-lg pointer-events-none"
-      >
-        <div className="flex items-center gap-2">
-          <FlaskConical size={18} className="text-bg-base animate-pulse" />
-          <span className="text-bg-base font-bold tracking-[0.2em] uppercase text-xs">
-            SANDBOX MODE — Synthetic Simulation Active
-          </span>
-        </div>
-        <div className="pointer-events-auto">
-          <button 
-            onClick={onExit}
-            className="flex items-center gap-1 bg-bg-base/20 hover:bg-bg-base/40 text-bg-base px-3 py-1 rounded-sm text-[10px] font-bold uppercase transition-all"
+    <div className="relative flex flex-1 flex-col h-full overflow-hidden">
+      <AnimatePresence>
+        {isActive && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="bg-primary/20 border-b border-primary/30 relative z-50 overflow-hidden backdrop-blur-md"
           >
-            Exit Sandbox
-            <X size={12} />
-          </button>
-        </div>
-      </motion.div>
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5 md:px-8">
+              <div className="flex flex-1 items-center gap-3">
+                <span className="bg-primary/20 border border-primary/40 rounded-pill p-1.5 flex items-center justify-center animate-pulse">
+                  <ShieldAlert size={14} className="text-primary" />
+                </span>
+                <p className="text-xs text-text-primary md:text-sm font-medium">
+                  <span className="font-bold text-primary">Simulation Active:</span> Running under virtual pricing rules. Values generated are simulated for audit purposes.
+                </p>
+              </div>
+              <button
+                onClick={onExit}
+                className="text-text-muted hover:text-text-primary bg-white/5 hover:bg-white/10 rounded-sm p-1.5 transition-colors border border-border-low/40"
+              >
+                <X size={14} />
+              </button>
+            </div>
+            <div className="bg-gradient-to-r from-transparent via-primary/50 to-transparent absolute bottom-0 left-0 right-0 h-[2px]" />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Background Tint */}
-      <div className="absolute inset-0 bg-amber-500/5 pointer-events-none z-10" />
-
-      {/* Content */}
-      <div className="pt-12">
+      <div className="flex-1 flex flex-col overflow-hidden relative">
         {children}
-      </div>
-
-      {/* Floating Corner Badge */}
-      <div className="fixed bottom-8 right-8 z-[100] pointer-events-none">
-         <div className="bg-amber-500 text-bg-base px-4 py-2 rounded-card shadow-2xl flex items-center gap-3">
-            <div className="h-2 w-2 rounded-full bg-bg-base animate-ping" />
-            <span className="text-xs font-black tracking-widest uppercase italic">Simulation Live</span>
-         </div>
       </div>
     </div>
   )

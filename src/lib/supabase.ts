@@ -1,5 +1,4 @@
 import { createClient as createBrowserClient } from '@/utils/supabase/client'
-import { Json } from './types'
 import { getAppUrl } from './urls'
 
 /**

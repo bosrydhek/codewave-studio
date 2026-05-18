@@ -3,9 +3,9 @@ import { getSupabaseClient } from './supabase'
 /**
  * Basic placeholder for chunking text for embeddings.
  */
-function chunkText(text: string, maxTokens: number = 500): string[] {
+function _chunkText(_text: string, _maxTokens: number = 500): string[] {
   // Very naive chunking by paragraphs for MVP
-  return text.split('\n\n').filter(p => p.trim().length > 0)
+  return _text.split('\n\n').filter(p => p.trim().length > 0)
 }
 
 /**
